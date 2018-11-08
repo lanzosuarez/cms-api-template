@@ -3,7 +3,7 @@
 .env
 ### Git ###
 *.orig
-
+/node_modules
 node_modules/
 
 ### Linux ###
@@ -32,6 +32,10 @@ Icon
 
 # Thumbnails
 ._*
+
+.env
+.error*
+.vscode
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
