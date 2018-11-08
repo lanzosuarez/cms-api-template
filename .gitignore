@@ -1,9 +1,10 @@
 
 # Created by https://www.gitignore.io/api/git,node,macos,linux,windows,visualstudiocode
 .env
-src/
 ### Git ###
 *.orig
+
+node_modules/
 
 ### Linux ###
 *~
