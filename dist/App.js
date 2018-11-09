@@ -35,7 +35,7 @@ class App {
         const server = this.server;
         const cors = corsMiddleware({
             origins: ["*"],
-            allowHeaders: ["Content-Type"],
+            allowHeaders: ["Content-Type", "authorization-token"],
             allowMethods: ["PATCH", "GET", "POST", "DELETE", "OPTIONS"]
         });
         server.pre(cors.preflight);

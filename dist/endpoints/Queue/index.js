@@ -7,6 +7,7 @@ const update_1 = require("./update");
 const get_all_1 = require("./get_all");
 const get_specific_1 = require("./get_specific");
 const paginate_queue_1 = require("./paginate_queue");
+const queues_count_1 = require("./queues_count");
 const assign_queue_1 = require("./assign_queue");
 class QrController {
     constructor(server, subject) {
@@ -21,6 +22,7 @@ class QrController {
         this.server.get({ path: endpoints_1.createPath("v1", `${this.subject}/all`) }, get_all_1.default);
         //paginate
         this.server.get({ path: endpoints_1.createPath("v1", `${this.subject}/paginate`) }, paginate_queue_1.default);
+        this.server.get({ path: endpoints_1.createPath("v1", `${this.subject}/paginate_count`) }, queues_count_1.default);
         //create
         this.server.post({ path: endpoints_1.createPath("v1", this.subject) }, create_1.default);
         //delete

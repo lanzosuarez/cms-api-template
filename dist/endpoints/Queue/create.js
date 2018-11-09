@@ -45,6 +45,7 @@ exports.default = (req, res, next) => {
         try {
             logger_1.default.info(`Create queue at ${new Date()}`);
             const best_agent = yield getBestAgent();
+            console.log(best_agent);
             if (best_agent) {
                 req.body.agent = best_agent;
             }

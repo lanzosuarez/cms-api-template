@@ -11,6 +11,10 @@ exports.default = () => {
         fb_id: { type: String, required: true },
         client: { type: String, required: true },
         status: { type: Number, default: 1 },
+        last_activity: {
+            required: false,
+            type: Schema.Types.ObjectId
+        },
         timestamp: {
             default: new Date(),
             type: Date

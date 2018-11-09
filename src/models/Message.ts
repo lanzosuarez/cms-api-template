@@ -16,7 +16,8 @@ export default (): void => {
       },
       required: true
     },
-    type: { type: Boolean, default: 1 }, //1-agent 0-client //2-admin
+    type: { type: Number, default: 1 }, //1-agent 0-client //2-admin
+    read: { type: Boolean, default: false },
     status: { type: Number, default: 1 },
     timestamp: {
       default: new Date(),

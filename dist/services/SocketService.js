@@ -18,9 +18,11 @@ class SocketService {
         this.socket.on("connection", socket => {
             console.log("A USER JUST CONNECTED");
             socket.on(JOIN, user_id => {
+                console.log("USER JOINED", user_id);
                 this.USER_SOCKETS[user_id] = socket;
             });
-            socket.on(DISCONNECT, user_id => {
+            socket.on(LOGOUT, user_id => {
+                console.log("USER DISCONNECTED");
                 delete this.USER_SOCKETS[user_id];
             });
         });

@@ -16,23 +16,19 @@ const {
 export default (req, res, next) => {
   const QueueModel = getModel(Queue, APP.APP_CLIENTS[0]);
   const {
-    pageSize = 10,
-    qAgent = "",
-    page = 1,
     qName = "",
     qStatus = 1,
-    qSort = "-1",
-    fields = "",
+    qAgent = "",
     startDate = "",
     endDate = ""
   } = req.query;
-  console.log("asdsa", qAgent);
 
   const getQueues = () => {
     const textQuery: any = [];
     let query: any = {
       status: Number(qStatus)
     };
+
     if (qAgent !== "") {
       textQuery.push({
         agent: ObjectId(qAgent)
@@ -40,7 +36,7 @@ export default (req, res, next) => {
     }
     if (qName !== "") {
       textQuery.push({
-        client: new RegExp(`${qName}`, "ig")
+        name: new RegExp(`${qName}`, "ig")
       });
     }
 
@@ -62,13 +58,9 @@ export default (req, res, next) => {
       query["$and"] = textQuery;
     }
 
-    return QueueModel.find(query, fields)
-      .sort({ timestamp: Number(qSort) })
-      .skip((Number(page) - 1) * Number(pageSize))
-      .limit(Number(pageSize))
-      .catch(err => {
-        throw err;
-      });
+    return QueueModel.countDocuments(query).catch(err => {
+      throw err;
+    });
   };
 
   const main = async () => {

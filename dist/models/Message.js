@@ -16,7 +16,8 @@ exports.default = () => {
             },
             required: true
         },
-        type: { type: Boolean, default: 1 },
+        type: { type: Number, default: 1 },
+        read: { type: Boolean, default: false },
         status: { type: Number, default: 1 },
         timestamp: {
             default: new Date(),

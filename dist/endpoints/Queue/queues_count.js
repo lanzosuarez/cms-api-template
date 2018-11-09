@@ -21,8 +21,7 @@ const { Queue } = types_1.AppCollectionNames;
 const { Types: { ObjectId } } = mongoose;
 exports.default = (req, res, next) => {
     const QueueModel = getModel(Queue, config_1.APP.APP_CLIENTS[0]);
-    const { pageSize = 10, qAgent = "", page = 1, qName = "", qStatus = 1, qSort = "-1", fields = "", startDate = "", endDate = "" } = req.query;
-    console.log("asdsa", qAgent);
+    const { qName = "", qStatus = 1, qAgent = "", startDate = "", endDate = "" } = req.query;
     const getQueues = () => {
         const textQuery = [];
         let query = {
@@ -35,7 +34,7 @@ exports.default = (req, res, next) => {
         }
         if (qName !== "") {
             textQuery.push({
-                client: new RegExp(`${qName}`, "ig")
+                name: new RegExp(`${qName}`, "ig")
             });
         }
         if (startDate !== "" && endDate !== "") {
@@ -56,11 +55,7 @@ exports.default = (req, res, next) => {
         if (textQuery.length > 0) {
             query["$and"] = textQuery;
         }
-        return QueueModel.find(query, fields)
-            .sort({ timestamp: Number(qSort) })
-            .skip((Number(page) - 1) * Number(pageSize))
-            .limit(Number(pageSize))
-            .catch(err => {
+        return QueueModel.countDocuments(query).catch(err => {
             throw err;
         });
     };
@@ -86,4 +81,4 @@ exports.default = (req, res, next) => {
     });
     main();
 };
-//# sourceMappingURL=paginate_queue.js.map
+//# sourceMappingURL=queues_count.js.map
