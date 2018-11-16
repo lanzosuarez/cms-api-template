@@ -51,7 +51,6 @@ export default (req, res, next) => {
       queue = await queue.save();
 
       //update agent info
-
       await updateAgentQueueCount(best_agent);
 
       //socket here
