@@ -1,3 +1,4 @@
 import QueuesModel from "./Queue";
+import MessageModel from "./Message";
 
-export default [QueuesModel];
+export default [QueuesModel, MessageModel];

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const SchemaTypes_1 = require("../types/SchemaTypes");
 const _1 = require(".");
 const mongoose = require("mongoose");
+const config_1 = require("../config");
 const { Schema } = mongoose;
 const { Queue } = SchemaTypes_1.AppCollectionNames;
 exports.default = () => {
@@ -13,10 +14,11 @@ exports.default = () => {
         status: { type: Number, default: 1 },
         last_activity: {
             required: false,
-            type: Schema.Types.ObjectId
+            type: Schema.Types.ObjectId,
+            ref: `${config_1.APP.APP_CLIENTS[0]}-Message`
         },
         timestamp: {
-            default: new Date(),
+            default: Date.now,
             type: Date
         }
     });

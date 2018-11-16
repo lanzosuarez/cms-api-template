@@ -57,9 +57,10 @@ exports.default = (req, res, next) => {
             query["$and"] = textQuery;
         }
         return QueueModel.find(query, fields)
-            .sort({ timestamp: Number(qSort) })
             .skip((Number(page) - 1) * Number(pageSize))
             .limit(Number(pageSize))
+            .sort({ timestamp: Number(qSort) })
+            .populate("last_activity")
             .catch(err => {
             throw err;
         });

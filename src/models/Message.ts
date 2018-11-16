@@ -8,19 +8,19 @@ const { Message } = AppCollectionNames;
 export default (): void => {
   const MessageSchema = new Schema({
     queue: { type: Schema.Types.ObjectId, required: true },
-    agent: { type: String, required: false },
+    agent: {
+      _id: Schema.Types.ObjectId,
+      name: { type: String, required: true }
+    },
     message: {
-      type: {
-        text: String,
-        attachments: [{ type: String, required: true }]
-      },
-      required: true
+      text: { type: String, required: false },
+      attachments: [{ type: String, required: true }]
     },
     type: { type: Number, default: 1 }, //1-agent 0-client //2-admin
     read: { type: Boolean, default: false },
     status: { type: Number, default: 1 },
     timestamp: {
-      default: new Date(),
+      default: Date.now,
       type: Date
     }
   });

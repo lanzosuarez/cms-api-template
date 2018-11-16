@@ -8,6 +8,7 @@ const NEW_QUEUE = "NEW_QUEUE";
 const CLIENT_MESSAGE = "CLIENT_MESSAGE";
 const ADMIN_MESSAGE = "ADMIN_MESSAGE";
 const AGENT_MESSAGE = "AGENT_MESSAGE";
+const READ = "READ";
 class SocketService {
     constructor(server) {
         this.USER_SOCKETS = {};
@@ -77,6 +78,12 @@ class SocketService {
     emitAdminMessageToAgent(payload) {
         const { message, agent } = payload;
         this.emitToAgent({ message }, agent, ADMIN_MESSAGE);
+    }
+    //emit read
+    emitReadQueueMessages(payload) {
+        console.log("emit read qeue messages");
+        const { queue, agent } = payload;
+        this.emitToAgentAndAdmin({ queue }, agent, READ);
     }
 }
 exports.default = SocketService;

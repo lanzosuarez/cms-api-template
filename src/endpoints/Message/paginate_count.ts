@@ -16,14 +16,11 @@ const {
 export default (req, res, next) => {
   const MessageModel = getModel(Message, APP.APP_CLIENTS[0]);
   const {
-    pageSize = 10,
-    page = 1,
-    qId,
     qText = "",
+    qId,
     status = 1,
     endDate = "",
-    startDate = "",
-    fields = ""
+    startDate = ""
   } = req.query;
 
   const getMessages = () => {
@@ -56,20 +53,15 @@ export default (req, res, next) => {
       query["$and"] = textQuery;
     }
 
-    return MessageModel.find(query, fields)
-      .sort({ timestamp: -1 })
-      .skip((Number(page) - 1) * Number(pageSize))
-      .limit(Number(pageSize))
-      .catch(err => {
-        throw err;
-      });
+    return MessageModel.countDocuments(query).catch(err => {
+      throw err;
+    });
   };
 
   const main = async () => {
     try {
       logger.info(`Get messages at ${new Date()}`);
-      const messages: any = await getMessages();
-      console.log(page, messages.length);
+      const messages = await getMessages();
 
       sendData(res, 200, {
         data: messages,

@@ -1,6 +1,7 @@
 import { AppCollectionNames } from "../types/SchemaTypes";
 import Models from ".";
 import * as mongoose from "mongoose";
+import { APP } from "../config";
 
 const { Schema } = mongoose;
 const { Queue } = AppCollectionNames;
@@ -13,10 +14,11 @@ export default (): void => {
     status: { type: Number, default: 1 },
     last_activity: {
       required: false,
-      type: Schema.Types.ObjectId
+      type: Schema.Types.ObjectId,
+      ref: `${APP.APP_CLIENTS[0]}-Message`
     },
     timestamp: {
-      default: new Date(),
+      default: Date.now,
       type: Date
     }
   });

@@ -20,7 +20,7 @@ const { Message } = types_1.AppCollectionNames;
 const { Types: { ObjectId } } = mongoose;
 exports.default = (req, res, next) => {
     const MessageModel = getModel(Message, config_1.APP.APP_CLIENTS[0]);
-    const { pageSize = 10, page = 1, qId, qText = "", status = 1, endDate = "", startDate = "", fields = "" } = req.query;
+    const { qText = "", qId, status = 1, endDate = "", startDate = "" } = req.query;
     const getMessages = () => {
         const textQuery = [];
         let query = {
@@ -50,11 +50,7 @@ exports.default = (req, res, next) => {
         if (textQuery.length > 0) {
             query["$and"] = textQuery;
         }
-        return MessageModel.find(query, fields)
-            .sort({ timestamp: -1 })
-            .skip((Number(page) - 1) * Number(pageSize))
-            .limit(Number(pageSize))
-            .catch(err => {
+        return MessageModel.countDocuments(query).catch(err => {
             throw err;
         });
     };
@@ -62,7 +58,6 @@ exports.default = (req, res, next) => {
         try {
             logger_1.default.info(`Get messages at ${new Date()}`);
             const messages = yield getMessages();
-            console.log(page, messages.length);
             sendData(res, 200, {
                 data: messages,
                 message: "Data Succesfully fetched",
@@ -81,4 +76,4 @@ exports.default = (req, res, next) => {
     });
     main();
 };
-//# sourceMappingURL=paginte_message.js.map
+//# sourceMappingURL=paginate_count.js.map

@@ -21,17 +21,26 @@ const { getModel } = models_1.default;
 exports.default = (req, res, next) => {
     const MessageModel = getModel(Message, config_1.APP.APP_CLIENTS[0]);
     const QueueModel = getModel(Queue, config_1.APP.APP_CLIENTS[0]);
+    const updateQueueLastActivity = (msg) => __awaiter(this, void 0, void 0, function* () {
+        const { queue } = req.body;
+        yield QueueModel.findByIdAndUpdate(queue, { $set: { last_activity: msg } });
+    });
     const main = () => __awaiter(this, void 0, void 0, function* () {
         try {
-            logger_1.default.info(`Create queue at ${new Date()}`);
+            logger_1.default.info(`Create message at ${new Date()}`);
             let message = new MessageModel(req.body);
             message = yield message.save();
-            const queue = yield QueueModel.findById(message.queue);
+            yield updateQueueLastActivity(message._id);
+            const agent = req.body.agent._id;
             //socket here
             switch (message.type) {
                 case 0: {
+                    console.log("client message");
                     //from client emit to agent and admin
-                    App_1.default.appSocket.emitClientMessage({ message, agent: queue.agent });
+                    App_1.default.appSocket.emitClientMessage({
+                        message,
+                        agent
+                    });
                     break;
                 }
                 case 1: {
@@ -43,21 +52,21 @@ exports.default = (req, res, next) => {
                     //from admin emit to agent
                     App_1.default.appSocket.emitAdminMessageToAgent({
                         message,
-                        agent: queue.agent
+                        agent
                     });
                     break;
                 }
             }
             sendData(res, 201, {
-                data: null,
+                data: message,
                 message: "Data Succesfully created",
                 code: status["201"]
             });
-            logger_1.default.info(`Create qr success at ${new Date()}`);
+            logger_1.default.info(`Create message success at ${new Date()}`);
         }
         catch (error) {
             console.error(error);
-            logger_1.default.info(`Create qr failed at ${new Date()}`);
+            logger_1.default.info(`Create message failed at ${new Date()}`);
             sendError(res, 500, {
                 errorMessage: "Internal Error",
                 code: status["500"]
