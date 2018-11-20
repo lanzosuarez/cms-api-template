@@ -22,7 +22,7 @@ const { getModel } = models_1.default;
 exports.default = (req, res, next) => {
     const QueueModel = getModel(Queue, config_1.APP.APP_CLIENTS[0]);
     const getBestAgent = () => UserService_1.default.getBestAgent()
-        .then(res => res.data.data._id)
+        .then(res => res.data.data)
         .catch(err => {
         throw err;
     });
@@ -45,18 +45,18 @@ exports.default = (req, res, next) => {
         try {
             logger_1.default.info(`Create queue at ${new Date()}`);
             const best_agent = yield getBestAgent();
-            console.log(best_agent);
+            console.log("best agent", best_agent);
             if (best_agent) {
-                req.body.agent = best_agent;
+                req.body.agent = best_agent._id;
             }
             let queue = new QueueModel(req.body);
             queue = yield queue.save();
             //update agent info
-            yield updateAgentQueueCount(best_agent);
+            yield updateAgentQueueCount(best_agent._id);
             //socket here
             App_1.default.appSocket.emitNewQueue({ queue, agent: best_agent });
             sendData(res, 201, {
-                data: queue,
+                data: Object.assign({}, queue._doc, { agent: { _id: best_agent._id, name: best_agent.username } }),
                 message: "Data Succesfully created",
                 code: status["201"]
             });

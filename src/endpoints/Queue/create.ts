@@ -17,7 +17,7 @@ export default (req, res, next) => {
 
   const getBestAgent = () =>
     UserService.getBestAgent()
-      .then(res => res.data.data._id)
+      .then(res => res.data.data)
       .catch(err => {
         throw err;
       });
@@ -41,23 +41,26 @@ export default (req, res, next) => {
     try {
       logger.info(`Create queue at ${new Date()}`);
       const best_agent = await getBestAgent();
-      console.log(best_agent);
+      console.log("best agent", best_agent);
 
       if (best_agent) {
-        req.body.agent = best_agent;
+        req.body.agent = best_agent._id;
       }
 
       let queue = new QueueModel(req.body);
       queue = await queue.save();
 
       //update agent info
-      await updateAgentQueueCount(best_agent);
+      await updateAgentQueueCount(best_agent._id);
 
       //socket here
       App.appSocket.emitNewQueue({ queue, agent: best_agent });
 
       sendData(res, 201, {
-        data: queue,
+        data: {
+          ...queue._doc,
+          agent: { _id: best_agent._id, name: best_agent.username }
+        },
         message: "Data Succesfully created",
         code: status["201"]
       });
