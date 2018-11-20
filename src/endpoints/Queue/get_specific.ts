@@ -22,7 +22,7 @@ export default (req, res, next) => {
     let status = 1;
     switch (by) {
       case "fb_id": {
-        return { username: value, status };
+        return { fb_id: value, status };
       }
       case "id": {
         return { _id: ObjectId(value), status };
@@ -33,6 +33,7 @@ export default (req, res, next) => {
   const main = async () => {
     try {
       logger.info(`Get queue at ${new Date()}`);
+      console.log("here");
       let queue = await QueueModel.findOne(createQuery(), fields);
 
       if (queue) {

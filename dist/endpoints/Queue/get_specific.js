@@ -26,7 +26,7 @@ exports.default = (req, res, next) => {
         let status = 1;
         switch (by) {
             case "fb_id": {
-                return { username: value, status };
+                return { fb_id: value, status };
             }
             case "id": {
                 return { _id: ObjectId(value), status };
@@ -36,6 +36,7 @@ exports.default = (req, res, next) => {
     const main = () => __awaiter(this, void 0, void 0, function* () {
         try {
             logger_1.default.info(`Get queue at ${new Date()}`);
+            console.log("here");
             let queue = yield QueueModel.findOne(createQuery(), fields);
             if (queue) {
                 sendData(res, 200, {
