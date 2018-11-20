@@ -31,28 +31,41 @@ exports.default = (req, res, next) => {
             case "id": {
                 return { _id: ObjectId(value), status };
             }
+            default:
+                return false;
         }
     };
     const main = () => __awaiter(this, void 0, void 0, function* () {
         try {
             logger_1.default.info(`Get queue at ${new Date()}`);
             console.log("here");
-            let queue = yield QueueModel.findOne(createQuery(), fields);
-            if (queue) {
-                sendData(res, 200, {
-                    data: queue,
-                    message: "Data Succesfully fetched",
-                    code: status["200"]
-                });
+            console.log("dsadada", createQuery());
+            if (createQuery() !== false) {
+                let queue = yield QueueModel.findOne(createQuery(), fields);
+                if (queue) {
+                    sendData(res, 200, {
+                        data: queue,
+                        message: "Data Succesfully fetched",
+                        code: status["200"]
+                    });
+                }
+                else {
+                    sendData(res, 200, {
+                        data: null,
+                        message: "No data found",
+                        code: status["200"]
+                    });
+                }
+                logger_1.default.info(`Get queue success at ${new Date()}`);
             }
             else {
-                sendData(res, 200, {
+                sendData(res, 400, {
                     data: null,
-                    message: "No data found",
-                    code: status["200"]
+                    message: "Bad query",
+                    code: status["400"]
                 });
+                logger_1.default.info(`Get queue failed at ${new Date()}`);
             }
-            logger_1.default.info(`Get queue success at ${new Date()}`);
         }
         catch (error) {
             console.log(error);

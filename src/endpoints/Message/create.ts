@@ -5,6 +5,7 @@ import Models from "../../models";
 import { AppCollectionNames, Message, Queue } from "../../types";
 import { APP } from "../../config";
 import App from "../../App";
+import MessengerService from "../../services/MessengerService";
 
 const { Message, Queue } = AppCollectionNames;
 const { sendData, sendError } = AppResponse;
@@ -17,6 +18,23 @@ export default (req, res, next) => {
   const updateQueueLastActivity = async msg => {
     const { queue } = req.body;
     await QueueModel.findByIdAndUpdate(queue, { $set: { last_activity: msg } });
+  };
+
+  const sendMessage = fb_id => {
+    const { message } = req.body;
+    const { text, attachments } = message;
+    if (text && attachments && attachments.length > 0) {
+      MessengerService.sendMessageText(text, fb_id);
+      attachments.forEach(attachment =>
+        MessengerService.sendMessageWithAttachment(attachment, fb_id)
+      );
+    } else if (text) {
+      MessengerService.sendMessageText(text, fb_id);
+    } else if (attachments && attachments.length > 0) {
+      attachments.forEach(attachment =>
+        MessengerService.sendMessageWithAttachment(attachment, fb_id)
+      );
+    }
   };
 
   const main = async () => {
@@ -42,6 +60,9 @@ export default (req, res, next) => {
         case 1: {
           //from agent emit to admin
           App.appSocket.emitAgentMessageToAdmin({ message });
+          const { fb_id } = await QueueModel.findById(req.body.queue);
+          sendMessage(fb_id);
+
           break;
         }
         case 2: {
@@ -50,6 +71,8 @@ export default (req, res, next) => {
             message,
             agent
           });
+          const { fb_id } = await QueueModel.findById(req.body.queue);
+          sendMessage(fb_id);
           break;
         }
       }

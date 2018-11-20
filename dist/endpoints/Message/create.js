@@ -15,6 +15,7 @@ const models_1 = require("../../models");
 const types_1 = require("../../types");
 const config_1 = require("../../config");
 const App_1 = require("../../App");
+const MessengerService_1 = require("../../services/MessengerService");
 const { Message, Queue } = types_1.AppCollectionNames;
 const { sendData, sendError } = response_1.default;
 const { getModel } = models_1.default;
@@ -25,6 +26,20 @@ exports.default = (req, res, next) => {
         const { queue } = req.body;
         yield QueueModel.findByIdAndUpdate(queue, { $set: { last_activity: msg } });
     });
+    const sendMessage = fb_id => {
+        const { message } = req.body;
+        const { text, attachments } = message;
+        if (text && attachments && attachments.length > 0) {
+            MessengerService_1.default.sendMessageText(text, fb_id);
+            attachments.forEach(attachment => MessengerService_1.default.sendMessageWithAttachment(attachment, fb_id));
+        }
+        else if (text) {
+            MessengerService_1.default.sendMessageText(text, fb_id);
+        }
+        else if (attachments && attachments.length > 0) {
+            attachments.forEach(attachment => MessengerService_1.default.sendMessageWithAttachment(attachment, fb_id));
+        }
+    };
     const main = () => __awaiter(this, void 0, void 0, function* () {
         try {
             logger_1.default.info(`Create message at ${new Date()}`);
@@ -46,6 +61,8 @@ exports.default = (req, res, next) => {
                 case 1: {
                     //from agent emit to admin
                     App_1.default.appSocket.emitAgentMessageToAdmin({ message });
+                    const { fb_id } = yield QueueModel.findById(req.body.queue);
+                    sendMessage(fb_id);
                     break;
                 }
                 case 2: {
@@ -54,6 +71,8 @@ exports.default = (req, res, next) => {
                         message,
                         agent
                     });
+                    const { fb_id } = yield QueueModel.findById(req.body.queue);
+                    sendMessage(fb_id);
                     break;
                 }
             }
