@@ -10,6 +10,7 @@ import get_specific from "./get_specific";
 import paginate_queue from "./paginate_queue";
 import queues_count from "./queues_count";
 import assign_queue from "./assign_queue";
+import end_queue from "./end_queue";
 
 export default class QrController implements RoutesController {
   subject = "";
@@ -47,6 +48,11 @@ export default class QrController implements RoutesController {
     this.server.patch(
       { path: createPath("v1", `${this.subject}/assign`, ["_id"]) },
       assign_queue
+    );
+    //end queue
+    this.server.patch(
+      { path: createPath("v1", `${this.subject}/end`, ["_id"]) },
+      end_queue
     );
     //update
     this.server.patch(

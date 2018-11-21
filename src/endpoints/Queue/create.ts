@@ -54,7 +54,7 @@ export default (req, res, next) => {
       await updateAgentQueueCount(best_agent._id);
 
       //socket here
-      App.appSocket.emitNewQueue({ queue, agent: best_agent });
+      App.appSocket.emitNewQueue({ queue, agent: best_agent._id });
 
       sendData(res, 201, {
         data: {

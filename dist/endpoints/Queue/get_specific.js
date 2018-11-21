@@ -20,16 +20,15 @@ const { getModel } = models_1.default;
 const { Queue } = types_1.AppCollectionNames;
 const { Types: { ObjectId } } = mongoose;
 exports.default = (req, res, next) => {
-    const { by, value, fields } = req.query;
+    const { by, value, fields, qStatus = 1 } = req.query;
     const QueueModel = getModel(Queue, config_1.APP.APP_CLIENTS[0]);
     const createQuery = () => {
-        let status = 1;
         switch (by) {
             case "fb_id": {
-                return { fb_id: value, status };
+                return { fb_id: value, status: Number(qStatus) };
             }
             case "id": {
-                return { _id: ObjectId(value), status };
+                return { _id: ObjectId(value), status: Number(qStatus) };
             }
             default:
                 return false;
@@ -38,8 +37,6 @@ exports.default = (req, res, next) => {
     const main = () => __awaiter(this, void 0, void 0, function* () {
         try {
             logger_1.default.info(`Get queue at ${new Date()}`);
-            console.log("here");
-            console.log("dsadada", createQuery());
             if (createQuery() !== false) {
                 let queue = yield QueueModel.findOne(createQuery(), fields);
                 if (queue) {

@@ -9,6 +9,7 @@ const get_specific_1 = require("./get_specific");
 const paginate_queue_1 = require("./paginate_queue");
 const queues_count_1 = require("./queues_count");
 const assign_queue_1 = require("./assign_queue");
+const end_queue_1 = require("./end_queue");
 class QrController {
     constructor(server, subject) {
         this.subject = "";
@@ -29,6 +30,8 @@ class QrController {
         this.server.del({ path: endpoints_1.createPath("v1", this.subject, ["_id"]) }, delete_1.default);
         //assign
         this.server.patch({ path: endpoints_1.createPath("v1", `${this.subject}/assign`, ["_id"]) }, assign_queue_1.default);
+        //end queue
+        this.server.patch({ path: endpoints_1.createPath("v1", `${this.subject}/end`, ["_id"]) }, end_queue_1.default);
         //update
         this.server.patch({ path: endpoints_1.createPath("v1", this.subject, ["_id"]) }, update_1.default);
     }

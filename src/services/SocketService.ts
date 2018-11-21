@@ -6,6 +6,7 @@ const LOGOUT = "LOGOUT";
 const DISCONNECT = "ORDER";
 
 const NEW_QUEUE = "NEW_QUEUE";
+const END_QUEUE = "END_QUEUE";
 const CLIENT_MESSAGE = "CLIENT_MESSAGE";
 const ADMIN_MESSAGE = "ADMIN_MESSAGE";
 const AGENT_MESSAGE = "AGENT_MESSAGE";
@@ -102,5 +103,12 @@ export default class SocketService {
     console.log("emit read qeue messages");
     const { queue, agent } = payload;
     this.emitToAgentAndAdmin({ queue }, agent, READ);
+  }
+
+  emitEndQueue(payload) {
+    console.log("emit end queue to admins and agent");
+    const { queue, agent } = payload;
+    console.log("emite agent", agent);
+    this.emitToAgentAndAdmin({ queue }, agent, END_QUEUE);
   }
 }
