@@ -24,7 +24,9 @@ exports.default = (req, res, next) => {
     const QueueModel = getModel(Queue, config_1.APP.APP_CLIENTS[0]);
     const updateQueueLastActivity = (msg) => __awaiter(this, void 0, void 0, function* () {
         const { queue } = req.body;
-        yield QueueModel.findByIdAndUpdate(queue, { $set: { last_activity: msg } });
+        return QueueModel.findByIdAndUpdate(queue, {
+            $set: { last_activity: msg }
+        });
     });
     const sendMessage = fb_id => {
         const { message } = req.body;
@@ -45,7 +47,7 @@ exports.default = (req, res, next) => {
             logger_1.default.info(`Create message at ${new Date()}`);
             let message = new MessageModel(req.body);
             message = yield message.save();
-            yield updateQueueLastActivity(message._id);
+            const queue = yield updateQueueLastActivity(message._id);
             const agent = req.body.agent._id;
             //socket here
             switch (message.type) {
@@ -54,13 +56,14 @@ exports.default = (req, res, next) => {
                     //from client emit to agent and admin
                     App_1.default.appSocket.emitClientMessage({
                         message,
-                        agent
+                        agent,
+                        queue
                     });
                     break;
                 }
                 case 1: {
                     //from agent emit to admin
-                    App_1.default.appSocket.emitAgentMessageToAdmin({ message });
+                    App_1.default.appSocket.emitAgentMessageToAdmin({ message, queue });
                     const { fb_id } = yield QueueModel.findById(req.body.queue);
                     sendMessage(fb_id);
                     break;
@@ -69,7 +72,8 @@ exports.default = (req, res, next) => {
                     //from admin emit to agent
                     App_1.default.appSocket.emitAdminMessageToAgent({
                         message,
-                        agent
+                        agent,
+                        queue
                     });
                     const { fb_id } = yield QueueModel.findById(req.body.queue);
                     sendMessage(fb_id);

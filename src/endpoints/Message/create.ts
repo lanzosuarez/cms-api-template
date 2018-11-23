@@ -17,7 +17,9 @@ export default (req, res, next) => {
 
   const updateQueueLastActivity = async msg => {
     const { queue } = req.body;
-    await QueueModel.findByIdAndUpdate(queue, { $set: { last_activity: msg } });
+    return QueueModel.findByIdAndUpdate(queue, {
+      $set: { last_activity: msg }
+    });
   };
 
   const sendMessage = fb_id => {
@@ -42,7 +44,7 @@ export default (req, res, next) => {
       logger.info(`Create message at ${new Date()}`);
       let message = new MessageModel(req.body);
       message = await message.save();
-      await updateQueueLastActivity(message._id);
+      const queue = await updateQueueLastActivity(message._id);
 
       const agent = req.body.agent._id;
 
@@ -53,23 +55,24 @@ export default (req, res, next) => {
           //from client emit to agent and admin
           App.appSocket.emitClientMessage({
             message,
-            agent
+            agent,
+            queue
           });
           break;
         }
         case 1: {
           //from agent emit to admin
-          App.appSocket.emitAgentMessageToAdmin({ message });
+          App.appSocket.emitAgentMessageToAdmin({ message, queue });
           const { fb_id } = await QueueModel.findById(req.body.queue);
           sendMessage(fb_id);
-
           break;
         }
         case 2: {
           //from admin emit to agent
           App.appSocket.emitAdminMessageToAgent({
             message,
-            agent
+            agent,
+            queue
           });
           const { fb_id } = await QueueModel.findById(req.body.queue);
           sendMessage(fb_id);

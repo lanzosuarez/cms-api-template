@@ -44,32 +44,36 @@ export default class SocketService {
   }
 
   emitToAgentAndAdmin(toEmit, agent, event: string) {
-    const [q] = Object.keys(toEmit);
+    const payload = {};
+    Object.keys(toEmit).forEach(key => (payload[key] = toEmit[key]));
+
     const adminSockets = this.getAdminSockets();
     const agentSocket = this.USER_SOCKETS[agent];
     if (agentSocket) {
-      agentSocket.emit(event, { [q]: toEmit[q] });
+      agentSocket.emit(event, payload);
     }
     adminSockets.forEach(socket => {
       const adminSocket = this.USER_SOCKETS[socket];
-      adminSocket.emit(event, { [q]: toEmit[q] });
+      adminSocket.emit(event, payload);
     });
   }
 
   emitToAdmin(toEmit, event: string) {
-    const [q] = Object.keys(toEmit);
+    const payload = {};
+    Object.keys(toEmit).forEach(key => (payload[key] = toEmit[key]));
     const adminSockets = this.getAdminSockets();
     adminSockets.forEach(socket => {
       const adminSocket = this.USER_SOCKETS[socket];
-      adminSocket.emit(event, { [q]: toEmit[q] });
+      adminSocket.emit(event, payload);
     });
   }
 
   emitToAgent(toEmit, agent, event: string) {
-    const [q] = Object.keys(toEmit);
+    const payload = {};
+    Object.keys(toEmit).forEach(key => (payload[key] = toEmit[key]));
     const agentSocket = this.USER_SOCKETS[agent];
     if (agentSocket) {
-      agentSocket.emit(event, { [q]: toEmit[q] });
+      agentSocket.emit(event, payload);
     }
   }
 
@@ -82,8 +86,8 @@ export default class SocketService {
 
   //emit new message to admin and agent
   emitClientMessage(payload) {
-    const { message, agent } = payload;
-    this.emitToAgentAndAdmin({ message }, agent, CLIENT_MESSAGE);
+    const { message, agent, queue } = payload;
+    this.emitToAgentAndAdmin({ message, queue }, agent, CLIENT_MESSAGE);
   }
 
   //emit agent message to admin
