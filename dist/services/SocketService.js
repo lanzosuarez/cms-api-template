@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const io = require("socket.io");
 const JOIN = "JOIN";
 const LOGOUT = "LOGOUT";
-const DISCONNECT = "ORDER";
 const NEW_QUEUE = "NEW_QUEUE";
 const END_QUEUE = "END_QUEUE";
 const CLIENT_MESSAGE = "CLIENT_MESSAGE";

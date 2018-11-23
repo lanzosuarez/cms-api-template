@@ -3,7 +3,6 @@ import * as io from "socket.io";
 
 const JOIN = "JOIN";
 const LOGOUT = "LOGOUT";
-const DISCONNECT = "ORDER";
 
 const NEW_QUEUE = "NEW_QUEUE";
 const END_QUEUE = "END_QUEUE";
