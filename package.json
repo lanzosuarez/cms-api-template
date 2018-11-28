@@ -12,6 +12,9 @@
     "compile": "tsc --watch",
     "serve": "nodemon dist"
   },
+  "engines": {
+    "node": "8.9.4"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
