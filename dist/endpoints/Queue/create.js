@@ -16,15 +16,15 @@ const types_1 = require("../../types");
 const config_1 = require("../../config");
 const { sendData, sendError } = response_1.default;
 const { getModel } = models_1.default;
-const { Sku } = types_1.AppCollectionNames;
+const { Queue } = types_1.AppCollectionNames;
 exports.default = (req, res, next) => {
-    const SkuModel = getModel(Sku, config_1.APP.APP_CLIENTS[0]);
+    const QueueModel = getModel(Queue, config_1.APP.APP_CLIENTS[0]);
     const main = () => __awaiter(this, void 0, void 0, function* () {
         try {
             logger_1.default.info(`Create sku at ${new Date()}`);
-            const newSku = yield new SkuModel(req.body).save();
+            const newQueue = yield new QueueModel(req.body).save();
             sendData(res, 201, {
-                data: newSku,
+                data: newQueue,
                 message: "Data Succesfully created",
                 code: status["201"]
             });

@@ -1,1 +1,1 @@
-{"version":3,"file":"SchemaTypes.js","sourceRoot":"","sources":["../../src/types/SchemaTypes.ts"],"names":[],"mappings":";;AAAA,IAAY,kBAIX;AAJD,WAAY,kBAAkB;IAC5B,qCAAe,CAAA;IACf,yCAAmB,CAAA;IACnB,iCAAW,CAAA;AACb,CAAC,EAJW,kBAAkB,GAAlB,0BAAkB,KAAlB,0BAAkB,QAI7B"}
+{"version":3,"file":"SchemaTypes.js","sourceRoot":"","sources":["../../src/types/SchemaTypes.ts"],"names":[],"mappings":";;AAAA,IAAY,kBAGX;AAHD,WAAY,kBAAkB;IAC5B,qCAAe,CAAA;IACf,yCAAmB,CAAA;AACrB,CAAC,EAHW,kBAAkB,GAAlB,0BAAkB,KAAlB,0BAAkB,QAG7B"}
