@@ -2,7 +2,7 @@ import { AppSettings } from "../types";
 export const APP: AppSettings = {
   APP_NAME: "CHATBOT-QR-SERVICE",
   APP_VERSION: "v1",
-  APP_CLIENTS: ["chatbot-levis"],
+  APP_CLIENTS: ["chatbot-smsupermalls"],
   DATABASE_URL: process.env.MONGODB_URI
 };
 
