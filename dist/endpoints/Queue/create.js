@@ -14,25 +14,57 @@ const logger_1 = require("../../logger");
 const models_1 = require("../../models");
 const types_1 = require("../../types");
 const config_1 = require("../../config");
+const UserService_1 = require("../../services/UserService");
+const App_1 = require("../../App");
+const { Queue } = types_1.AppCollectionNames;
 const { sendData, sendError } = response_1.default;
 const { getModel } = models_1.default;
-const { Queue } = types_1.AppCollectionNames;
 exports.default = (req, res, next) => {
     const QueueModel = getModel(Queue, config_1.APP.APP_CLIENTS[0]);
-    const main = () => __awaiter(this, void 0, void 0, function* () {
+    const getBestAgent = () => UserService_1.default.getBestAgent()
+        .then(res => res.data.data)
+        .catch(err => {
+        throw err;
+    });
+    const updateAgentQueueCount = (agentId) => __awaiter(this, void 0, void 0, function* () {
         try {
-            logger_1.default.info(`Create sku at ${new Date()}`);
-            const newQueue = yield new QueueModel(req.body).save();
-            sendData(res, 201, {
-                data: newQueue,
-                message: "Data Succesfully created",
-                code: status["201"]
-            });
-            logger_1.default.info(`Create sku success at ${new Date()}`);
+            const res = yield UserService_1.default.getAgent(agentId);
+            const agent = res.data.data;
+            console.log(agent);
+            if (agent) {
+                yield UserService_1.default.updateAgentQueue(agentId, {
+                    queued: Number(agent.queued) + 1
+                });
+            }
         }
         catch (error) {
             console.error(error);
-            logger_1.default.info(`Create sku failed at ${new Date()}`);
+        }
+    });
+    const main = () => __awaiter(this, void 0, void 0, function* () {
+        try {
+            logger_1.default.info(`Create queue at ${new Date()}`);
+            const best_agent = yield getBestAgent();
+            console.log("best agent", best_agent);
+            if (best_agent) {
+                req.body.agent = best_agent._id;
+            }
+            let queue = new QueueModel(req.body);
+            queue = yield queue.save();
+            //update agent info
+            yield updateAgentQueueCount(best_agent._id);
+            //socket here
+            App_1.default.appSocket.emitNewQueue({ queue, agent: best_agent._id });
+            sendData(res, 201, {
+                data: Object.assign({}, queue._doc, { agent: { _id: best_agent._id, name: best_agent.username } }),
+                message: "Data Succesfully created",
+                code: status["201"]
+            });
+            logger_1.default.info(`Create queue success at ${new Date()}`);
+        }
+        catch (error) {
+            console.error(error);
+            logger_1.default.info(`Create queue failed at ${new Date()}`);
             sendError(res, 500, {
                 errorMessage: "Internal Error",
                 code: status["500"]
