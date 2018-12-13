@@ -26,7 +26,6 @@ export default (req, res, next) => {
     startDate = "",
     endDate = ""
   } = req.query;
-  console.log("asdsa", qAgent);
 
   const getQueues = () => {
     const textQuery: any = [];

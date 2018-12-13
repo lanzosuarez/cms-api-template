@@ -22,7 +22,6 @@ const { Types: { ObjectId } } = mongoose;
 exports.default = (req, res, next) => {
     const QueueModel = getModel(Queue, config_1.APP.APP_CLIENTS[0]);
     const { pageSize = 10, qAgent = "", page = 1, qName = "", qStatus = 1, qSort = "-1", fields = "", startDate = "", endDate = "" } = req.query;
-    console.log("asdsa", qAgent);
     const getQueues = () => {
         const textQuery = [];
         let query = {
