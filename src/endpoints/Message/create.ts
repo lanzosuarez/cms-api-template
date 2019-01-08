@@ -7,13 +7,27 @@ import { APP } from "../../config";
 import App from "../../App";
 import MessengerService from "../../services/MessengerService";
 
+import * as mongoose from "mongoose";
+
+import Raw from "../../models/Raw";
+
 const { Message, Queue } = AppCollectionNames;
 const { sendData, sendError } = AppResponse;
 const { getModel } = Models;
 
 export default (req, res, next) => {
+  const conn = mongoose.createConnection(process.env.MONGO_URI_MASTER, {
+      autoReconnect: true,
+      reconnectTries: Number.MAX_VALUE,
+      reconnectInterval: 1000,
+      config: { autoIndex: false },
+      useNewUrlParser: true
+    }),
+    rawDataModel = conn.model("raw-collector", Raw);
+
   const MessageModel = getModel(Message, APP.APP_CLIENTS[0]);
   const QueueModel = getModel(Queue, APP.APP_CLIENTS[0]);
+  const [_, client] = APP.APP_CLIENTS[0].split("-");
 
   const updateQueueLastActivity = async msg => {
     const { queue } = req.body;
@@ -22,8 +36,22 @@ export default (req, res, next) => {
     });
   };
 
+  const getMessageType = () => {
+    const { message } = req.body;
+
+    const { text, attachments } = message;
+    if (text && attachments && attachments.length > 0) {
+      return "template";
+    } else if (text) {
+      return "text";
+    } else if (attachments && attachments.length > 0) {
+      return "image";
+    }
+  };
+
   const sendMessage = fb_id => {
     const { message } = req.body;
+
     const { text, attachments } = message;
     if (text && attachments && attachments.length > 0) {
       MessengerService.sendMessageText(text, fb_id);
@@ -37,6 +65,28 @@ export default (req, res, next) => {
         MessengerService.sendMessageWithAttachment(attachment, fb_id)
       );
     }
+
+    createRaw(fb_id, true, req.body.message, getMessageType());
+    console.log("create raw");
+  };
+
+  const createRaw = (fb_id, is_echo, message, type) => {
+    const attributes = {
+      fb_id,
+      is_echo,
+      type,
+      client,
+      message
+    };
+
+    const raw = new rawDataModel({
+      attributes,
+      event_name: "chat",
+      event_source: "msbf",
+      numerical_value: 1
+    });
+
+    raw.save();
   };
 
   const main = async () => {
@@ -58,6 +108,8 @@ export default (req, res, next) => {
             agent,
             queue
           });
+          const { fb_id } = await QueueModel.findById(req.body.queue);
+          createRaw(fb_id, false, req.body.message, getMessageType());
           break;
         }
         case 1: {

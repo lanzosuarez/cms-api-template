@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.APP = {
-    APP_NAME: "CHATBOT-QR-SERVICE",
+    APP_NAME: "smsupermalls",
     APP_VERSION: "v1",
     APP_CLIENTS: ["chatbot-smsupermalls"],
     DATABASE_URL: process.env.MONGODB_URI

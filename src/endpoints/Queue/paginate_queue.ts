@@ -26,11 +26,12 @@ export default (req, res, next) => {
     startDate = "",
     endDate = ""
   } = req.query;
+  console.log("asdsa", qAgent);
 
   const getQueues = () => {
     const textQuery: any = [];
     let query: any = {
-      status: Number(qStatus)
+      $or: [{ status: Number(qStatus) }, { status: 3 }]
     };
     if (qAgent !== "") {
       textQuery.push({

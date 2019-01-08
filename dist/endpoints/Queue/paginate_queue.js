@@ -68,6 +68,7 @@ exports.default = (req, res, next) => {
         try {
             logger_1.default.info(`Get queues at ${new Date()}`);
             const queues = yield getQueues();
+            console.log(queues);
             sendData(res, 200, {
                 data: queues,
                 message: "Data Succesfully fetched",

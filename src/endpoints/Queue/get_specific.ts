@@ -21,10 +21,16 @@ export default (req, res, next) => {
   const createQuery = () => {
     switch (by) {
       case "fb_id": {
-        return { fb_id: value, status: Number(qStatus) };
+        return {
+          fb_id: value,
+          $or: [{ status: Number(qStatus) }, { status: 3 }]
+        };
       }
       case "id": {
-        return { _id: ObjectId(value), status: Number(qStatus) };
+        return {
+          _id: ObjectId(value),
+          $or: [{ status: Number(qStatus) }, { status: 3 }]
+        };
       }
       default:
         return false;

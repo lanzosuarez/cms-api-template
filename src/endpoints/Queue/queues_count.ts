@@ -26,7 +26,7 @@ export default (req, res, next) => {
   const getQueues = () => {
     const textQuery: any = [];
     let query: any = {
-      status: Number(qStatus)
+      $or: [{ status: Number(qStatus) }, { status: 3 }]
     };
 
     if (qAgent !== "") {
